@@ -17,7 +17,6 @@ The project was developed for the [Robust Medical Image Classification Challenge
 * Per-class error analysis and confusion-matrix inspection
 * Probability-level ensembling across multiple independently trained models
 * Reproducible generation of Kaggle-compatible predictions
-* Final private leaderboard score: **0.79589**
 
 ## Technical Approach
 
@@ -84,15 +83,12 @@ The repository includes:
 
 Probability averaging preserves confidence information and provides a more stable final prediction than selecting a single checkpoint.
 
-## Competition Result
+## Challenge Context
 
-| Evaluation                       |       Score |
-| -------------------------------- | ----------: |
-| Final Kaggle private leaderboard | **0.79589** |
+This project was developed using the Robust Medical Image Classification Challenge 2025 dataset as a practical benchmark for studying classification reliability under image corruption and class-specific failure modes.
 
-Eight submissions were used during model development and evaluation.
+The repository focuses on the complete experimental workflow: robustness-oriented augmentation, class-aware training, validation error analysis, checkpoint comparison, and probability-level model ensembling.
 
-The final system combines corruption-aware training, class-specific error analysis, and multi-model probability ensembling.
 
 ## Repository Structure
 
