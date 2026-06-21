@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.venv/
+venv/
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Competition data
+IS_2025_OrganAMNIST/
+data/
+
+# Model checkpoints
+*.pth
+*.pt
+
+# Generated outputs
+*.npy
+submission*.csv
+test_*submission*.csv
+
+# Logs
+logs/
+runs/

@@ -1,57 +1,44 @@
-# Robust Abdominal CT Classification under Image Corruptions
+# RobustMedCT 2025: Robust Abdominal CT Classification
 
-A PyTorch pipeline for robust 11-class organ classification from
-grayscale abdominal CT images, developed for the Robust Medical Image
-Classification Challenge 2025.
+PyTorch implementation for 11-class organ classification from grayscale abdominal CT images. The project was developed for the Robust Medical Image Classification Challenge 2025 and focuses on robustness to image degradation, class imbalance, validation error analysis, and probability-level model ensembling.
 
-The project focuses on performance under image degradation and
-class-specific failure modes rather than clean-image accuracy alone.
+## What is included
 
-## Highlights
+- ResNet-18 and ResNet-34 adapted to one-channel CT images
+- Gaussian noise, salt-and-pepper noise, resolution degradation, affine augmentation, and random erasing
+- Class-balanced sampling and validation-guided weighting of difficult classes
+- Per-class validation accuracy and confusion-matrix analysis
+- Two-model and four-model probability averaging
+- Kaggle-compatible submission generation
 
-- ResNet-18 and ResNet-34 adapted for single-channel CT images
-- Corruption-aware augmentation with Gaussian noise, salt-and-pepper
-  noise, resolution degradation, affine transformations, and random erasing
-- Class-balanced sampling with validation-guided hard-class weighting
-- Per-class accuracy and confusion-matrix analysis
-- Probability-level ensembling across two and four independently trained models
-- Reproducible generation of Kaggle-compatible predictions
+## Repository structure
 
-## Pipeline
-
-```mermaid
-flowchart LR
-    A[Training CT images] --> B[Corruption-aware augmentation]
-    B --> C[ResNet-18 / ResNet-34]
-    C --> D[Validation evaluation]
-    D --> E[Per-class error analysis]
-    E --> F[Hard-class weighting]
-    C --> G[Probability ensemble]
-    G --> H[Test predictions]
+```text
+.
+├── README.md
+├── requirements.txt
+├── .gitignore
+├── LICENSE
+├── models_robustmedct.py
+├── train_resnet18.py
+├── train_resnet34.py
+├── analyze_val_errors.py
+├── print_confusion_matrix.py
+├── ensemble_2models.py
+├── ensemble_4models.py
+└── notebooks/
+    └── robustmedct_experiments.ipynb
 ```
 
-## Results
-
-| Model | Validation Accuracy | Macro-F1 | Kaggle Private Score |
-|---|---:|---:|---:|
-| ResNet-18 v2 | ADD | ADD | ADD |
-| ResNet-18 v3 | ADD | ADD | ADD |
-| ResNet-34 v2 | ADD | ADD | ADD |
-| ResNet-34 v3 | ADD | ADD | ADD |
-| Four-model ensemble | ADD | ADD | ADD |
-
-Only metrics reproduced from saved predictions or experiment logs are
-reported.
+The dataset, trained checkpoints, NumPy outputs, and submission CSV files are intentionally not included.
 
 ## Dataset
 
-The competition dataset is not distributed in this repository.
-
-Download it from:
+Download the competition data from Kaggle:
 
 https://www.kaggle.com/competitions/robust-med-ct-2025/data
 
-Expected structure:
+Place it in the repository root using this structure:
 
 ```text
 IS_2025_OrganAMNIST/
@@ -69,50 +56,100 @@ IS_2025_OrganAMNIST/
 ## Installation
 
 ```bash
-git clone https://github.com/Mingze101/robust-medct-2025.git
-cd robust-medct-2025
-
 python -m venv .venv
+```
+
+Windows PowerShell:
+
+```powershell
+.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 ```
 
-## Usage
+## Training
 
-Train an individual model:
-
-```bash
-python scripts/train.py --model resnet18
-python scripts/train.py --model resnet34
-```
-
-Evaluate checkpoints and generate per-class metrics:
+Train ResNet-18:
 
 ```bash
-python scripts/evaluate.py
-python scripts/analyze_validation_errors.py
+python train_resnet18.py
 ```
 
-Generate a four-model ensemble submission:
+Train ResNet-34:
 
 ```bash
-python scripts/predict_ensemble.py \
-    --checkpoints checkpoints/resnet18_v2.pth \
-                  checkpoints/resnet18_v3.pth \
-                  checkpoints/resnet34_v2.pth \
-                  checkpoints/resnet34_v3.pth
+python train_resnet34.py
 ```
 
-## Methodological Notes
+The training scripts save the best checkpoint according to validation macro-F1.
 
-Hard-class weighting was derived from validation-set error patterns and
-should therefore be interpreted as model-development feedback rather
-than independent test evidence.
+## Validation analysis
 
-The repository is intended for research and benchmarking. It is not a
-clinical diagnostic system.
+`analyze_val_errors.py` expects these local checkpoint names:
+
+```text
+best_resnet18_robustmedct.pth
+best_resnet34_robustmedct.pth
+```
+
+If the selected checkpoints use version suffixes, create local copies with the expected names. For example, in PowerShell:
+
+```powershell
+Copy-Item best_resnet18_robustmedct_ver2.pth best_resnet18_robustmedct.pth
+Copy-Item best_resnet34_robustmedct_ver2.pth best_resnet34_robustmedct.pth
+```
+
+Then run:
+
+```bash
+python analyze_val_errors.py
+python print_confusion_matrix.py
+```
+
+The analysis creates confusion-matrix arrays locally. These generated `.npy` files are excluded from Git.
+
+## Ensemble inference
+
+Two-model ensemble:
+
+```bash
+python ensemble_2models.py
+```
+
+The script averages the ResNet-18 and ResNet-34 class probabilities.
+
+Four-model ensemble:
+
+```bash
+python ensemble_4models.py
+```
+
+The four-model script expects these local checkpoint names:
+
+```text
+best_resnet18_robustmedct_ver2.pth
+best_resnet18_robustmedct_ver3.pth
+best_resnet34_robustmedct_ver2.pth
+best_resnet34_robustmedct_ver3.pth
+```
+
+It writes `submission_ens4models.csv`, which is ignored by Git.
+
+## Reproducibility notes
+
+- Images are converted to grayscale and resized to 224 × 224.
+- Models use a one-channel first convolution and an 11-class output layer.
+- The training scripts initialize ResNet models from torchvision ImageNet weights.
+- Check the competition rules before describing an ImageNet-initialized run as fully compliant with a no-external-data restriction.
+- Validation-guided difficult-class weighting is a model-development choice and is not independent test evidence.
+
+## Results
+
+Final leaderboard score and rank should only be added here after verifying them directly on Kaggle. Submission filenames and local notes are not treated as authoritative evaluation records.
+
+## Disclaimer
+
+This repository is for research and benchmarking only. It is not a clinical diagnostic system.
 
 ## License
 
-The source code is released under the MIT License. The competition
-dataset and its associated terms are governed separately by the dataset
-provider and Kaggle competition rules.
+Code is released under the MIT License. The competition dataset remains subject to the provider's and Kaggle's separate terms.
