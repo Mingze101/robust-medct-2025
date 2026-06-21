@@ -142,9 +142,16 @@ It writes `submission_ens4models.csv`, which is ignored by Git.
 - Check the competition rules before describing an ImageNet-initialized run as fully compliant with a no-external-data restriction.
 - Validation-guided difficult-class weighting is a model-development choice and is not independent test evidence.
 
-## Results
+## Competition Result
 
-Final leaderboard score and rank should only be added here after verifying them directly on Kaggle. Submission filenames and local notes are not treated as authoritative evaluation records.
+| Leaderboard               |       Score |        Rank |
+| ------------------------- | ----------: | ----------: |
+| Final private leaderboard | **0.79589** | **19 / 27** |
+
+Eight submissions were evaluated during the competition. The repository documents the training, validation-error analysis, and model-ensembling workflow developed for the challenge.
+
+The result is reported directly from the final Kaggle private leaderboard. Model-specific scores are not reported because separate verified leaderboard records are unavailable.
+
 
 ## Disclaimer
 
